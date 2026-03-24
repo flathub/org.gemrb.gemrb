@@ -4,11 +4,6 @@ runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 command: org.gemrb.gemrb.sh
 
-# FIXME: remove once GemRB > v0.9.4
-rename-icon: gemrb
-rename-desktop-file: gemrb.desktop
-# FIXME ends
-
 finish-args:
   # gamepad support
   - --device=all
@@ -24,7 +19,7 @@ cleanup:
   - /share/man
   - /share/pixmaps
   - /include
-  - "*.a"
+  - '*.a'
   - /lib/cmake
 
 modules:
@@ -47,7 +42,7 @@ modules:
     buildsystem: cmake-ninja
     build-options:
       env:
-        CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+        CMAKE_POLICY_VERSION_MINIMUM: '3.5'
     sources:
       - type: archive
         url: https://github.com/dscharrer/innoextract/releases/download/1.9/innoextract-1.9.tar.gz
@@ -71,9 +66,9 @@ modules:
       - -DOPENGL_BACKEND=OpenGL
     sources:
       - type: archive
-        url: https://api.github.com/repos/gemrb/gemrb/zipball/v0.9.4
+        url: https://api.github.com/repos/gemrb/gemrb/zipball/v0.9.5
         dest-filename: gemrb.zip
-        sha256: a1bb517b315677209ed510263b572b38440f33ad50de0d9f3915c6719b8dbb89
+        sha256: 163e27e75dfb003867d29b23212ad8d0941d7db29f7e55346e60db614bfca455
         x-checker-data:
           type: json
           url: https://api.github.com/repos/gemrb/gemrb/releases/latest
@@ -83,15 +78,16 @@ modules:
         dest-filename: org.gemrb.gemrb.sh
         commands:
           - GEMRB_CONFIG_FILE=${XDG_CONFIG_HOME}/gemrb.cfg
-          - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE}; fi
+          - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE};
+            fi
           - gemrb -c ${GEMRB_CONFIG_FILE} $@
-      # FIXME: remove once GemRB > v0.9.4
+      # FIXME: remove once GemRB > v0.9.5
       - type: file
-        url: https://raw.githubusercontent.com/gemrb/gemrb/dfd9d2d55503705db6f9edbf02dbf23d304de239/platforms/linux/org.gemrb.gemrb.metainfo.xml
+        url: https://raw.githubusercontent.com/gemrb/gemrb/e74dbc62f47d02033382ad8fcc0bf5314419b85c/platforms/linux/org.gemrb.gemrb.metainfo.xml
         dest: platforms/linux/
-        sha256: 8ee647ba1043b448ad830519402d2e0a4f1b15b0c9f19256c002a5f644a7d360
+        sha256: d77373c74fa735224158c350ef996b94383e3ef2457eec89e02f8f095220f38f
       # FIXME ends
     post-install:
       - sed -i "s:CachePath=./Cache2/:CachePath=$XDG_CACHE_HOME/gemrb:" /app/etc/gemrb/GemRB.cfg
-      - desktop-file-edit --set-key=Terminal --set-value=false /app/share/applications/gemrb.desktop
+      - desktop-file-edit --set-key=Terminal --set-value=false /app/share/applications/org.gemrb.gemrb.desktop
       - install -vDm755 $FLATPAK_BUILDER_BUILDDIR/org.gemrb.gemrb.sh -t /app/bin
