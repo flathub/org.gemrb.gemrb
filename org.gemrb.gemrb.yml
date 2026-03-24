@@ -4,11 +4,6 @@ runtime-version: '24.08'
 sdk: org.freedesktop.Sdk
 command: org.gemrb.gemrb.sh
 
-# FIXME: remove once GemRB > v0.9.4
-rename-icon: gemrb
-rename-desktop-file: gemrb.desktop
-# FIXME ends
-
 finish-args:
   # gamepad support
   - --device=all
@@ -86,13 +81,13 @@ modules:
           - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE};
             fi
           - gemrb -c ${GEMRB_CONFIG_FILE} $@
-      # FIXME: remove once GemRB > v0.9.4
+      # FIXME: remove once GemRB > v0.9.5
       - type: file
-        url: https://raw.githubusercontent.com/gemrb/gemrb/dfd9d2d55503705db6f9edbf02dbf23d304de239/platforms/linux/org.gemrb.gemrb.metainfo.xml
+        url: https://raw.githubusercontent.com/gemrb/gemrb/e74dbc62f47d02033382ad8fcc0bf5314419b85c/platforms/linux/org.gemrb.gemrb.metainfo.xml
         dest: platforms/linux/
-        sha256: 8ee647ba1043b448ad830519402d2e0a4f1b15b0c9f19256c002a5f644a7d360
+        sha256: d77373c74fa735224158c350ef996b94383e3ef2457eec89e02f8f095220f38f
       # FIXME ends
     post-install:
       - sed -i "s:CachePath=./Cache2/:CachePath=$XDG_CACHE_HOME/gemrb:" /app/etc/gemrb/GemRB.cfg
-      - desktop-file-edit --set-key=Terminal --set-value=false /app/share/applications/gemrb.desktop
+      - desktop-file-edit --set-key=Terminal --set-value=false /app/share/applications/org.gemrb.gemrb.desktop
       - install -vDm755 $FLATPAK_BUILDER_BUILDDIR/org.gemrb.gemrb.sh -t /app/bin
