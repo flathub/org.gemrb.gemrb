@@ -1,6 +1,6 @@
 app-id: org.gemrb.gemrb
 runtime: org.freedesktop.Platform
-runtime-version: '24.08'
+runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 command: org.gemrb.gemrb.sh
 
@@ -74,20 +74,27 @@ modules:
           url: https://api.github.com/repos/gemrb/gemrb/releases/latest
           version-query: .tag_name | sub("^v"; "")
           url-query: .zipball_url
-      - type: script
-        dest-filename: org.gemrb.gemrb.sh
-        commands:
-          - GEMRB_CONFIG_FILE=${XDG_CONFIG_HOME}/gemrb.cfg
-          - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE};
-            fi
-          - gemrb -c ${GEMRB_CONFIG_FILE} $@
       # FIXME: remove once GemRB > v0.9.5
       - type: file
         url: https://raw.githubusercontent.com/gemrb/gemrb/e74dbc62f47d02033382ad8fcc0bf5314419b85c/platforms/linux/org.gemrb.gemrb.metainfo.xml
         dest: platforms/linux/
         sha256: d77373c74fa735224158c350ef996b94383e3ef2457eec89e02f8f095220f38f
       # FIXME ends
+      - type: script
+        dest-filename: org.gemrb.gemrb.sh
+        commands:
+          - GEMRB_CONFIG_FILE=${XDG_CONFIG_HOME}/gemrb/GemRB.cfg
+          # create configuration file directory if needed
+          - if [[ ! -d ${XDG_CONFIG_HOME}/gemrb/ ]]; then mkdir -p ${XDG_CONFIG_HOME}/gemrb; fi
+          # move configuration files from the original version of the Flatpak
+          - if [[ -f ${XDG_CONFIG_HOME}/gemrb.cfg ]]; then mv ${XDG_CONFIG_HOME}/gemrb.cfg ${GEMRB_CONFIG_FILE}; fi
+          # If there is no configuration file, copy the default one
+          - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE}; fi
+          # fill in $XDG_CACHE_HOME in the configuration file if needed
+          - sed -i "s:\$XDG_CACHE_HOME:$XDG_CACHE_HOME:" ${GEMRB_CONFIG_FILE}
+          # Run GemRB
+          - gemrb $@
     post-install:
-      - sed -i "s:CachePath=./Cache2/:CachePath=$XDG_CACHE_HOME/gemrb:" /app/etc/gemrb/GemRB.cfg
+      - sed -i "s:CachePath=.*:CachePath=\$XDG_CACHE_HOME/gemrb:" /app/etc/gemrb/GemRB.cfg
       - desktop-file-edit --set-key=Terminal --set-value=false /app/share/applications/org.gemrb.gemrb.desktop
-      - install -vDm755 $FLATPAK_BUILDER_BUILDDIR/org.gemrb.gemrb.sh -t /app/bin
+      - install -vD -m755 $FLATPAK_BUILDER_BUILDDIR/org.gemrb.gemrb.sh -t /app/bin
