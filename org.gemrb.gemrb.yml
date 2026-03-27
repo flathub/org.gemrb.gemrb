@@ -96,5 +96,6 @@ modules:
           - gemrb $@
     post-install:
       - sed -i "s:CachePath=.*:CachePath=\$XDG_CACHE_HOME/gemrb:" /app/etc/gemrb/GemRB.cfg
+      - desktop-file-edit --set-key=Exec --set-value=org.gemrb.gemrb.sh /app/share/applications/org.gemrb.gemrb.desktop
       - desktop-file-edit --set-key=Terminal --set-value=false /app/share/applications/org.gemrb.gemrb.desktop
-      - install -vD -m755 $FLATPAK_BUILDER_BUILDDIR/org.gemrb.gemrb.sh -t /app/bin
+      - install -D -m755 $FLATPAK_BUILDER_BUILDDIR/org.gemrb.gemrb.sh -t /app/bin
