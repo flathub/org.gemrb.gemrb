@@ -30,8 +30,8 @@ modules:
       - ./b2 -j$FLATPAK_BUILDER_N_JOBS install
     sources:
       - type: archive
-        url: https://archives.boost.io/release/1.90.0/source/boost_1_90_0.tar.gz
-        sha256: 5e93d582aff26868d581a52ae78c7d8edf3f3064742c6e77901a1f18a437eea9
+        url: https://archives.boost.io/release/1.91.0/source/boost_1_91_0.tar.gz
+        sha256: 5734305f40a76c30f951c9abd409a45a2a19fb546efe4162119250bbe4d3a463
         x-checker-data:
           type: anitya
           project-id: 6845
@@ -85,11 +85,14 @@ modules:
         commands:
           - GEMRB_CONFIG_FILE=${XDG_CONFIG_HOME}/gemrb/GemRB.cfg
           # create configuration file directory if needed
-          - if [[ ! -d ${XDG_CONFIG_HOME}/gemrb/ ]]; then mkdir -p ${XDG_CONFIG_HOME}/gemrb; fi
+          - if [[ ! -d ${XDG_CONFIG_HOME}/gemrb/ ]]; then mkdir -p ${XDG_CONFIG_HOME}/gemrb;
+            fi
           # move configuration files from the original version of the Flatpak
-          - if [[ -f ${XDG_CONFIG_HOME}/gemrb.cfg ]]; then mv ${XDG_CONFIG_HOME}/gemrb.cfg ${GEMRB_CONFIG_FILE}; fi
+          - if [[ -f ${XDG_CONFIG_HOME}/gemrb.cfg ]]; then mv ${XDG_CONFIG_HOME}/gemrb.cfg
+            ${GEMRB_CONFIG_FILE}; fi
           # If there is no configuration file, copy the default one
-          - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE}; fi
+          - if [[ ! -f ${GEMRB_CONFIG_FILE} ]]; then cp /app/etc/gemrb/GemRB.cfg ${GEMRB_CONFIG_FILE};
+            fi
           # fill in $XDG_CACHE_HOME in the configuration file if needed
           - sed -i "s:\$XDG_CACHE_HOME:$XDG_CACHE_HOME:" ${GEMRB_CONFIG_FILE}
           # Run GemRB
